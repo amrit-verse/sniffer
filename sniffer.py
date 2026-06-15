@@ -56,6 +56,8 @@ class NetworkSniffer:
         self.packet_count = 0
         self.protocol_counts = defaultdict(int)
         self.start_time = None
+        self._stopped = False
+        self._error_state = False
         
         self._setup_directories()
         self._setup_logging()
@@ -100,7 +102,7 @@ class NetworkSniffer:
 
     def display_banner(self):
         """Displays an ASCII banner on startup."""
-        banner_text = """
+        banner_text = r"""
    ____          _         _       _             
   / ___|___   __| | ___   / \     | | _ __  _ __  
  | |   / _ \ / _` |/ _ \ / _ \    | || '_ \| '_ \ 
@@ -261,7 +263,7 @@ class NetworkSniffer:
             console.print("[red]Raw socket access requires administrative privileges. Please run the script with 'sudo' (Linux) or as Administrator (Windows).[/red]")
             console.print("[red]Example: sudo venv/bin/python sniffer.py[/red]")
             logging.error("Permission denied. Ensure script is run with elevated privileges.")
-            self.stop(error=True)
+            self._error_state = True
         except OSError as e:
             if "No such device" in str(e):
                 console.print(f"\n[bold red][!] Device not found.[/bold red]")
@@ -269,16 +271,25 @@ class NetworkSniffer:
             else:
                 console.print(f"\n[bold red][!] An OS error occurred: {e}[/bold red]")
             logging.error(f"OS error: {e}")
-            self.stop(error=True)
+            self._error_state = True
         except KeyboardInterrupt:
-            self.stop()
+            # Caught if Scapy raises it, ignore to let finally block execute
+            pass
         except Exception as e:
             console.print(f"\n[bold red][!] An unexpected error occurred: {e}[/bold red]")
             logging.error(f"Unexpected sniffer error: {e}")
-            self.stop(error=True)
+            self._error_state = True
+        finally:
+            self.stop(error=getattr(self, '_error_state', False))
 
     def stop(self, error=False):
         """Halts the sniffer and displays a summary of the capture session."""
+        if getattr(self, '_stopped', False):
+            return
+        self._stopped = True
+
+        console.print("\n[bold yellow]Stopping packet capture and generating report...[/bold yellow]")
+
         if self.pcap_writer:
             self.pcap_writer.close()
 
@@ -287,32 +298,25 @@ class NetworkSniffer:
             duration = round(time.time() - self.start_time, 2)
             
         logging.info(f"Sniffing stopped. Total captured: {self.packet_count}. Duration: {duration}s")
-
-        if not error:
-            console.print("\n\n[bold green]Sniffing Session Terminated.[/bold green]")
+        logging.shutdown()
         
         # Display Summary Table
         summary_table = Table(title="Capture Session Summary", show_header=True, header_style="bold magenta")
-        summary_table.add_column("Metric", style="dim", width=20)
+        summary_table.add_column("Metric", style="dim", width=25)
         summary_table.add_column("Value")
         
-        summary_table.add_row("Total Packets", str(self.packet_count))
-        summary_table.add_row("Duration", f"{duration} seconds")
-        summary_table.add_row("CSV File", self.output_csv)
-        summary_table.add_row("Log File", self.log_file)
+        summary_table.add_row("Total Packets Captured", str(self.packet_count))
+        summary_table.add_row("TCP Packet Count", str(self.protocol_counts.get("TCP", 0)))
+        summary_table.add_row("UDP Packet Count", str(self.protocol_counts.get("UDP", 0)))
+        summary_table.add_row("ICMP Packet Count", str(self.protocol_counts.get("ICMP", 0) + self.protocol_counts.get("ICMPv6", 0)))
+        summary_table.add_row("ARP Packet Count", str(self.protocol_counts.get("ARP", 0)))
+        summary_table.add_row("Capture Duration", f"{duration} seconds")
+        summary_table.add_row("CSV Export Path", self.output_csv)
         if self.pcap_export:
-            summary_table.add_row("PCAP File", self.output_pcap)
+            summary_table.add_row("PCAP Export Path", self.output_pcap)
+        summary_table.add_row("Log File Path", self.log_file)
             
         console.print(summary_table)
-        
-        # Display Protocol Breakdown
-        if self.protocol_counts:
-            proto_table = Table(title="Protocol Breakdown", show_header=True, header_style="bold cyan")
-            proto_table.add_column("Protocol")
-            proto_table.add_column("Count")
-            for proto, count in sorted(self.protocol_counts.items(), key=lambda item: item[1], reverse=True):
-                proto_table.add_row(proto, str(count))
-            console.print(proto_table)
 
         sys.exit(1 if error else 0)
 
@@ -346,4 +350,7 @@ if __name__ == "__main__":
         pcap_export=args.pcap
     )
     
-    sniffer.start()
+    try:
+        sniffer.start()
+    except KeyboardInterrupt:
+        sniffer.stop()
