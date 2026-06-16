@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>CodeAlpha Basic Network Sniffer</h1>
+  <h1>Basic Network Sniffer</h1>
   <p><strong>A Network Packet Capture Tool Built with Python and Scapy</strong></p>
 
   [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org)
@@ -10,14 +10,14 @@
 ---
 
 ## 📖 Overview
-The **CodeAlpha Basic Network Sniffer** is a Python-based utility developed to intercept, inspect, and log local network traffic. Utilizing the **Scapy** library, the tool classifies network protocols, extracts payload snippets, and saves the captured data to both CSV and PCAP files for later analysis. 
+The **Basic Network Sniffer** is a Python-based utility developed to intercept, inspect, and log local network traffic. Utilizing the **Scapy** library, the tool classifies network protocols, extracts payload snippets, and saves the captured data to both CSV and PCAP files for later analysis. 
 
-This project was built as a hands-on learning exercise during the **CodeAlpha Cyber Security Internship** to better understand network fundamentals and Python programming.
+This project was built as a hands-on learning exercise during a **Cyber Security Internship** to better understand network fundamentals and Python programming.
 
 ## 👨‍💻 Author
 **Amritesh Mishra**  
 *Bachelor of Engineering (Computer Science Engineering)*  
-*CodeAlpha Cyber Security Internship Project*
+*Cyber Security Internship Project*
 
 ## ✨ Features
 - **Live Packet Capture:** Intercepts traffic on the local network interface using raw sockets.

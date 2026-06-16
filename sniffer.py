@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CodeAlpha Basic Network Sniffer
+Basic Network Sniffer
 
 A network packet sniffer built with Python and Scapy.
 Captures live network traffic, extracts packet metadata,
@@ -8,7 +8,7 @@ logs output to CSV and PCAP formats, and displays real-time
 traffic in the terminal using the Rich library.
 
 Author: Amritesh Mishra
-Project: CodeAlpha Cyber Security Internship Project
+Project: Cyber Security Internship Project
 """
 
 import argparse
@@ -109,7 +109,7 @@ class NetworkSniffer:
  | |__| (_) | (_| |  __// ___ \   | || |_) | | | |
   \____\___/ \__,_|\___/_/   \_\  |_|| .__/|_| |_|
                                      |_|          
-        CodeAlpha Basic Network Sniffer
+        Basic Network Sniffer
         """
         panel = Panel(
             Text(banner_text, style="bold cyan", justify="center"),
@@ -322,7 +322,7 @@ class NetworkSniffer:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="CodeAlpha Basic Network Sniffer - A student cybersecurity project.",
+        description="Basic Network Sniffer - A student cybersecurity project.",
         formatter_class=argparse.RawTextHelpFormatter
     )
     

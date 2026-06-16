@@ -1,6 +1,6 @@
 # Internship Project Report: Basic Network Sniffer
 
-**Project Title:** CodeAlpha_BasicNetworkSniffer  
+**Project Title:** BasicNetworkSniffer  
 **Author:** Amritesh Mishra  
 **Degree:** Bachelor of Engineering (Computer Science Engineering)  
 **Role:** Cyber Security Intern  
@@ -9,7 +9,7 @@
 ---
 
 ## 1. Introduction
-During my Cyber Security Internship with CodeAlpha, my task was to build a network packet sniffer from scratch. The goal was to understand how data moves across a network and how security tools intercept and interpret that data. This report outlines how I built a Python-based sniffer using the Scapy library to monitor and log network traffic.
+During my Cyber Security Internship, my task was to build a network packet sniffer from scratch. The goal was to understand how data moves across a network and how security tools intercept and interpret that data. This report outlines how I built a Python-based sniffer using the Scapy library to monitor and log network traffic.
 
 ## 2. Objectives
 - Capture live network traffic on my local machine.
